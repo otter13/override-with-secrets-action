@@ -10,27 +10,11 @@ ${{ github.event.inputs.json-override }}
 Example:
 
 {
-  "PINGACCESS_RS_CLIENT_SECRET": "PINGACCESS_RS_CLIENT_SECRET",
-  "Aux_LDAP_UserDNPassword": "AUX_LDAP_USERDNPASSWORD",
-  "PCV_Hicksons_PASSWORD": "PCV_Hicksons_PASSWORD",
-  "PCV_CGW_PASSWORD": "PCV_CGW_PASSWORD",
-  "PCV_MERITON_PASSWORD": "PCV_MERITON_PASSWORD",
-  "PCV_STOCKLAND_PASSWORD": "PCV_STOCKLAND_PASSWORD",
-  "PCV_Maddocks_PASSWORD": "PCV_MADDOCKS_PASSWORD",
-  "PCV_Lightspeed_PASSWORD": "PCV_LIGHTSPEED_PASSWORD",
-  "PCV_Nab_PASSWORD": "PCV_NAB_PASSWORD",
-  "ROPC_CLIENT_SECRET": "OTP_SECRET",
-  "ROPC_PASSWORD": "OTP_PASSWORD",
-  "SES_PASSWORD": "SES_PASSWORD",
-  "SPAdapter_Password": "SPADAPTER_PASSWORD"
+  "ADMIN_PASSWORD": "placeholder",
+  "ANOTHER_PASSWORD": "placeholder",
 }
 
-For each key-calue pair in the above json object, the value needs to be replaced by the github secret, referenced by the name as the value:
-
-{
-  "PINGACCESS_RS_CLIENT_SECRET": ${{ secrets["PINGACCESS_RS_CLIENT_SECRET" }},
-  ...
-}
+For each key-calue pair in the above json object, the value needs to be replaced by the github secret.
 
 */
 
@@ -38,18 +22,22 @@ const core = require('@actions/core');
 
 const configureInputs = () => {
   const inputjsonString = core.getInput('jsonString');
+  const inputValue = core.getInput('value');
 
   return {
     jsonString: inputjsonString,
+    value: inputValue
   }
 }
 const override = async ({
-  jsonString
+  jsonString,
+  value
 })=> {
   var overridenJsonString = ''
   const obj = JSON.parse(jsonString)
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
+        obj[key] = value
         console.log(key + " -> " + obj[key]);
     }
   }
@@ -63,8 +51,8 @@ const saveToEnv = (overridenJsonString) => {
 
 const run = async () => {
   try {
-    const { jsonString } = configureInputs();
-    const overridenJsonString = await override({jsonString});
+    const { jsonString, value } = configureInputs();
+    const overridenJsonString = await override({jsonString, value});
     saveToEnv(overridenJsonString);
   } catch (error) {
     core.setFailed(error.message);
