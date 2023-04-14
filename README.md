@@ -24,7 +24,11 @@ Code snippet for using the action in workflow
       - name: aws-ssm-to-env
         uses: ./.github/actions/override-with-secrets-action
         with:
-          jsonString: $
+          jsonString: '{
+                    "ADMIN_PASSWORD": "placeholder",
+                    "ANOTHER_PASSWORD": "placeholder",
+                  }',
+          value: ${{ secrets.ADMINPASS }}       
 
       - name: log envs
         env:
