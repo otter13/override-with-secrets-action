@@ -3,6 +3,8 @@ description: 'loverride values in input json with secrets'
 inputs:
   jsonString:
     required: true
+  value:
+    required: true
 runs:
   using: 'node16'
   main: 'dist/index.js'
